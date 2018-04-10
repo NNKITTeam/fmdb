@@ -204,6 +204,13 @@ NS_ASSUME_NONNULL_END
     if (_db) {
         [self close];
     }
+    //pichugin
+    
+    int fc=sqlite3_threadsafe();
+    
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    
+    flags=SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE| SQLITE_OPEN_FULLMUTEX;
     
     // now open database
     
@@ -242,7 +249,11 @@ NS_ASSUME_NONNULL_END
     
     do {
         retry   = NO;
-        rc      = sqlite3_close(_db);
+        //rc      = sqlite3_close(_db);
+
+        rc      = sqlite3_close_v2(_db);
+
+        
         if (SQLITE_BUSY == rc || SQLITE_LOCKED == rc) {
             if (!triedFinalizingOpenStatements) {
                 triedFinalizingOpenStatements = YES;
